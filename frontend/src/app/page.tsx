@@ -13,19 +13,19 @@
 //   const handleConnect = async () => {
 //     setIsConnecting(true);
 //     setError(null);
-    
+
 //     try {
 //       console.log('Attempting to connect...');
-//       const response = await fetch('http://localhost:8000/setup-browser', {
+//       const response = await fetch('http://127.0.0.1:8000/setup-browser', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
 //         },
 //         body: JSON.stringify({ url: 'https://www.google.com' }),
 //       });
-      
+
 //       console.log('Response status:', response.status);
-      
+
 //       if (!response.ok) {
 //         const errorData = await response.json();
 //         throw new Error(errorData.detail || 'Failed to setup browser');
@@ -44,8 +44,8 @@
 //   return (
 //     <div className="relative min-h-screen flex items-center justify-center p-6">
 //       <ParticlesBackground />
-      
-//       <SpotlightCard 
+
+//       <SpotlightCard
 //         className="w-full max-w-3xl mx-auto p-8 md:p-12"
 //         spotlightColor="rgba(59, 130, 246, 0.15)"
 //         gradient="from-blue-500/20 to-teal-500/20"
@@ -85,9 +85,9 @@
 //             <button
 //               onClick={handleConnect}
 //               disabled={isConnecting}
-//               className="w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full 
+//               className="w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full
 //                        text-white font-medium transition-all duration-300
-//                        hover:opacity-90 hover:shadow-lg hover:shadow-blue-500/25 
+//                        hover:opacity-90 hover:shadow-lg hover:shadow-blue-500/25
 //                        disabled:opacity-50 disabled:cursor-not-allowed
 //                        transform hover:scale-[1.02] active:scale-[0.98]
 //                        focus:outline-none focus:ring-2 focus:ring-blue-500/50"
@@ -104,12 +104,12 @@
 //   );
 // }
 
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { SpotlightCard } from '@/components/ui/SpotlightCard';
-import { ParticlesBackground } from '@/components/ui/ParticlesBackground';
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SpotlightCard } from "@/components/ui/SpotlightCard";
+import { ParticlesBackground } from "@/components/ui/ParticlesBackground";
 
 export default function Home() {
   const router = useRouter();
@@ -121,27 +121,32 @@ export default function Home() {
     setError(null);
 
     try {
-      console.log('Attempting to connect...');
-      const response = await fetch('http://localhost:8000/setup-browser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: 'https://www.google.com' }),
-      });
+      console.log("Attempting to connect...");
+      const response = await fetch(
+        "http://http://127.0.0.1:8000/setup-browser",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: "https://www.google.com" }),
+        }
+      );
 
-      console.log('Response status:', response.status);
+      console.log("Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to setup browser');
+        throw new Error(errorData.detail || "Failed to setup browser");
       }
 
-      console.log('Connection successful, redirecting...');
-      await router.push('/rover');
+      console.log("Connection successful, redirecting...");
+      await router.push("/rover");
     } catch (error) {
-      console.error('Failed to connect:', error);
-      setError(error instanceof Error ? error.message : 'Failed to connect to browser');
+      console.error("Failed to connect:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to connect to browser"
+      );
     } finally {
       setIsConnecting(false);
     }
@@ -151,7 +156,7 @@ export default function Home() {
     <div className="relative min-h-screen flex items-center justify-center p-6">
       <ParticlesBackground />
 
-      <SpotlightCard 
+      <SpotlightCard
         className="w-full max-w-3xl mx-auto p-8 md:p-12"
         spotlightColor="rgba(59, 130, 246, 0.15)"
         gradient="from-blue-500/20 to-teal-500/20"
@@ -171,18 +176,33 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-3 text-center">
               <div className="text-3xl">🔍</div>
-              <h3 className="text-lg font-semibold text-zinc-200">Autonomous Task Automation</h3>
-              <p className="text-zinc-400">Navigate and interact with web pages intelligently, automating workflows effortlessly.</p>
+              <h3 className="text-lg font-semibold text-zinc-200">
+                Autonomous Task Automation
+              </h3>
+              <p className="text-zinc-400">
+                Navigate and interact with web pages intelligently, automating
+                workflows effortlessly.
+              </p>
             </div>
             <div className="space-y-3 text-center">
               <div className="text-3xl">🤖</div>
-              <h3 className="text-lg font-semibold text-zinc-200">AI-Powered Decision Making</h3>
-              <p className="text-zinc-400">Leverage advanced language models for smarter, self-correcting navigation.</p>
+              <h3 className="text-lg font-semibold text-zinc-200">
+                AI-Powered Decision Making
+              </h3>
+              <p className="text-zinc-400">
+                Leverage advanced language models for smarter, self-correcting
+                navigation.
+              </p>
             </div>
             <div className="space-y-3 text-center">
               <div className="text-3xl">📊</div>
-              <h3 className="text-lg font-semibold text-zinc-200">Advanced Visual Context</h3>
-              <p className="text-zinc-400">Real-time page annotation and screenshot analysis for precise interaction.</p>
+              <h3 className="text-lg font-semibold text-zinc-200">
+                Advanced Visual Context
+              </h3>
+              <p className="text-zinc-400">
+                Real-time page annotation and screenshot analysis for precise
+                interaction.
+              </p>
             </div>
           </div>
 
@@ -209,11 +229,9 @@ export default function Home() {
                        transform hover:scale-[1.02] active:scale-[0.98]
                        focus:outline-none focus:ring-2 focus:ring-blue-500/50"
             >
-              {isConnecting ? 'Connecting...' : 'Connect to Browser'}
+              {isConnecting ? "Connecting..." : "Connect to Browser"}
             </button>
-            {error && (
-              <p className="mt-4 text-red-400 text-center">{error}</p>
-            )}
+            {error && <p className="mt-4 text-red-400 text-center">{error}</p>}
           </div>
         </div>
       </SpotlightCard>

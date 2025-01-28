@@ -1,45 +1,45 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { ResponseDisplay } from '@/components/rover/ResponseDisplay';
-import { QueryInput } from '@/components/rover/QueryInput';
-import { ParticlesBackground } from '@/components/ui/ParticlesBackground';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ResponseDisplay } from "@/components/rover/ResponseDisplay";
+import { QueryInput } from "@/components/rover/QueryInput";
+import { ParticlesBackground } from "@/components/ui/ParticlesBackground";
 
 interface Message {
-  type: 'thought' | 'action' | 'final_answer' | 'error';
+  type: "thought" | "action" | "final_answer" | "error";
   content: string;
 }
 
 export default function RoverPage() {
   const router = useRouter();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDisconnect = async () => {
     try {
-      await fetch('http://localhost:8000/cleanup', {
-        method: 'POST',
+      await fetch("http://127.0.0.1:8000/cleanup", {
+        method: "POST",
       });
     } catch (error) {
-      console.error('Failed to cleanup browser:', error);
+      console.error("Failed to cleanup browser:", error);
     } finally {
-      router.push('/');
+      router.push("/");
     }
   };
 
   const handleSubmit = async () => {
     if (!query.trim()) return;
-    
+
     setIsLoading(true);
     setMessages([]); // Clear previous messages
-    
+
     try {
-      const response = await fetch('http://localhost:8000/query', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:8000/query", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),
       });
@@ -48,62 +48,72 @@ export default function RoverPage() {
       if (!reader) return;
 
       const decoder = new TextDecoder();
-      let buffer = '';
+      let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n\n');
-        
-        buffer = lines.pop() || '';
+        const lines = buffer.split("\n\n");
+
+        buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.trim() && line.startsWith('data: ')) {
+          if (line.trim() && line.startsWith("data: ")) {
             try {
               const jsonStr = line.slice(6).trim();
               const data = JSON.parse(jsonStr);
 
               // Skip keepalive messages
-              if (data.type === 'keepalive') continue;
+              if (data.type === "keepalive") continue;
 
               // Handle action messages
-              if (data.type === 'action' && typeof data.content === 'object') {
+              if (data.type === "action" && typeof data.content === "object") {
                 const { action, args } = data.content;
-                data.content = `${action}${args ? ` → ${args}` : ''}`;
+                data.content = `${action}${args ? ` → ${args}` : ""}`;
               }
 
               // Validate message structure
-              if (!data || typeof data.type !== 'string') {
-                console.error('Invalid message structure:', data);
+              if (!data || typeof data.type !== "string") {
+                console.error("Invalid message structure:", data);
                 continue;
               }
 
               // Ensure content is always a string
-              if (typeof data.content === 'object') {
+              if (typeof data.content === "object") {
                 data.content = JSON.stringify(data.content);
               }
 
               // Only add valid message types
-              if (['thought', 'action', 'final_answer', 'error'].includes(data.type)) {
-                setMessages(prev => [...prev, {
-                  type: data.type,
-                  content: String(data.content)
-                }]);
+              if (
+                ["thought", "action", "final_answer", "error"].includes(
+                  data.type
+                )
+              ) {
+                setMessages((prev) => [
+                  ...prev,
+                  {
+                    type: data.type,
+                    content: String(data.content),
+                  },
+                ]);
               }
             } catch (e) {
-              console.error('Failed to parse SSE message:', e, line);
+              console.error("Failed to parse SSE message:", e, line);
             }
           }
         }
       }
     } catch (error) {
-      console.error('Failed to send query:', error);
-      setMessages(prev => [...prev, {
-        type: 'error',
-        content: 'Failed to connect to the server'
-      }]);
+      console.error("Failed to send query:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "error",
+          content: "Failed to connect to the server",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -112,13 +122,17 @@ export default function RoverPage() {
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-zinc-900 via-black to-black">
       <ParticlesBackground />
-      
+
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 p-4 backdrop-blur-xl bg-black/30 z-50
-                        border-b border-zinc-800/50 shadow-lg shadow-black/20">
+      <header
+        className="fixed top-0 left-0 right-0 p-4 backdrop-blur-xl bg-black/30 z-50
+                        border-b border-zinc-800/50 shadow-lg shadow-black/20"
+      >
         <div className="flex justify-between items-center max-w-[1600px] mx-auto">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 
-                        text-transparent bg-clip-text animate-flow bg-[length:200%_auto]">
+          <h1
+            className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 
+                        text-transparent bg-clip-text animate-flow bg-[length:200%_auto]"
+          >
             NavAI
           </h1>
 
