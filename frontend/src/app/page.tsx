@@ -158,79 +158,102 @@ export default function Home() {
         spotlightColor="rgba(59, 130, 246, 0.15)"
         gradient="from-blue-500/20 to-teal-500/20"
       >
+       
+
+
         <div className="space-y-12">
-          {/* Title Section */}
-          <div className="space-y-4 text-center">
-            <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 text-transparent bg-clip-text">
-              NavAI
-            </h1>
-            <p className="text-xl md:text-2xl text-zinc-400">
-              Powering the Next Frontier of AI-Driven Web Automation
-            </p>
-          </div>
+  {/* Title Section */}
+  <div className="space-y-4 text-center">
+    <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 text-transparent bg-clip-text">
+      NavAI
+    </h1>
+    <p className="text-xl md:text-2xl text-zinc-400">
+      Powering the Next Frontier of AI-Driven Web Automation
+    </p>
+  </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-3 text-center">
-              <div className="text-3xl">🔍</div>
-              <h3 className="text-lg font-semibold text-zinc-200">
-                Autonomous Task Automation
-              </h3>
-              <p className="text-zinc-400">
-                Navigate and interact with web pages intelligently, automating
-                workflows effortlessly.
-              </p>
-            </div>
-            <div className="space-y-3 text-center">
-              <div className="text-3xl">🤖</div>
-              <h3 className="text-lg font-semibold text-zinc-200">
-                AI-Powered Decision Making
-              </h3>
-              <p className="text-zinc-400">
-                Leverage advanced language models for smarter, self-correcting
-                navigation.
-              </p>
-            </div>
-            <div className="space-y-3 text-center">
-              <div className="text-3xl">📊</div>
-              <h3 className="text-lg font-semibold text-zinc-200">
-                Advanced Visual Context
-              </h3>
-              <p className="text-zinc-400">
-                Real-time page annotation and screenshot analysis for precise
-                interaction.
-              </p>
-            </div>
-          </div>
+  {/* Features Grid */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="space-y-3 text-center">
+      <div className="text-3xl">🔍</div>
+      <h3 className="text-lg font-semibold text-zinc-200">
+        Autonomous Task Automation
+      </h3>
+      <p className="text-zinc-400">
+        Navigate and interact with web pages intelligently, automating
+        workflows effortlessly.
+      </p>
+    </div>
+    <div className="space-y-3 text-center">
+      <div className="text-3xl">🤖</div>
+      <h3 className="text-lg font-semibold text-zinc-200">
+        AI-Powered Decision Making
+      </h3>
+      <p className="text-zinc-400">
+        Leverage advanced language models for smarter, self-correcting
+        navigation.
+      </p>
+    </div>
+    <div className="space-y-3 text-center">
+      <div className="text-3xl">📊</div>
+      <h3 className="text-lg font-semibold text-zinc-200">
+        Advanced Visual Context
+      </h3>
+      <p className="text-zinc-400">
+        Real-time page annotation and screenshot analysis for precise
+        interaction.
+      </p>
+    </div>
+  </div>
 
-          {/* Token Information Section */}
-          {/* <div className="space-y-4 text-center">
-            <h2 className="text-2xl font-semibold text-zinc-200">Why $NAVAI?</h2>
-            <p className="text-zinc-400">
-              NavAI simplifies tasks across industries—e-commerce, travel, research, and personal finance—empowering users to save time and make smarter decisions.
-            </p>
-            <p className="text-zinc-400">
-              Total Supply: 1 Billion $NAVAI | 15% Ecosystem Development | 10% Marketing | 10% Team & Advisors (12-month lock)
-            </p>
-          </div> */}
+  {/* AI Infra Token Section */}
+  <div className="space-y-6 text-center p-6 rounded-lg">
+  <h2 className="text-2xl font-semibold text-zinc-200">
+      What’s this AI infra token for?
+    </h2>
+    <p className="text-zinc-400">
+      $NAVAI is revolutionizing web automation by powering NavAI, an AI framework for creating intelligent agents that transform how we interact with the internet.
+    </p>
+    <p className="text-zinc-400">
+      This framework enables developers to build autonomous agents that interpret user input, navigate websites, and complete complex tasks across various domains.
+    </p>
+    <p className="text-zinc-400">
+      NavAI combines cutting-edge AI technologies, including advanced language models, web automation tools, and visual processing capabilities. The framework uses LangGraph for state management, Playwright for browser automation, and the latest LLMs for decision-making, ensuring that the agents created with NavAI are sophisticated and adaptable.
+    </p>
+    <p className="text-zinc-400">
+      Imagine having an AI co-pilot for web-based tasks, customizable to fit specific needs. NavAI agents can handle complex workflows in various industries:
+    </p>
+    <ul className="text-zinc-400 text-left inline-block space-y-2">
+      <li>✅ E-commerce: Automate price comparisons, track inventory, analyze customer reviews.</li>
+      <li>✅ Travel: Optimize itineraries, track price drops, compile top flight & hotel options.</li>
+      <li>✅ Research: Gather and synthesize data, analyze trends, summarize papers.</li>
+      <li>✅ Finance: Monitor investments, track expenses, provide financial insights.</li>
+      <li>✅ Creative fields: Find social media trends, automate content tasks.</li>
+    </ul>
+    <p className="text-zinc-400">
+      The $NAVAI token plays a crucial role by incentivizing developers, maintaining framework operations, and rewarding users. Holding $NAVAI supports a vision for a more accessible and efficient online world.
+    </p>
+  </div>
 
-          {/* Connect Button */}
-          <div className="pt-4">
-            <button
-              onClick={handleConnect}
-              disabled={isConnecting}
-              className="w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full 
-                       text-white font-medium transition-all duration-300
-                       hover:opacity-90 hover:shadow-lg hover:shadow-blue-500/25 
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       transform hover:scale-[1.02] active:scale-[0.98]
-                       focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-            >
-              {isConnecting ? "Connecting..." : "Connect to Browser"}
-            </button>
-            {error && <p className="mt-4 text-red-400 text-center">{error}</p>}
-          </div>
-        </div>
+  {/* Connect Button */}
+  <div className="pt-4">
+    <button
+      onClick={handleConnect}
+      disabled={isConnecting}
+      className="w-full px-8 py-4 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full 
+                 text-white font-medium transition-all duration-300
+                 hover:opacity-90 hover:shadow-lg hover:shadow-blue-500/25 
+                 disabled:opacity-50 disabled:cursor-not-allowed
+                 transform hover:scale-[1.02] active:scale-[0.98]
+                 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+    >
+      {isConnecting ? "Connecting..." : "Connect to Browser"}
+    </button>
+    {error && <p className="mt-4 text-red-400 text-center">{error}</p>}
+  </div>
+</div>
+
+
       </SpotlightCard>
     </div>
   );
