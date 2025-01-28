@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-#from langchain_anthropic import ChatAnthropic
+# from langchain_anthropic import ChatAnthropic
 import os
-#import nest_asyncio
+# import nest_asyncio
 from typing import TypedDict, List, Annotated
 from playwright.async_api import Page
 from langchain_core.messages import BaseMessage
@@ -21,33 +21,33 @@ from IPython.display import Image, display
 from langgraph.graph import StateGraph, START, END
 
 
-
-
-#nest_asyncio.apply()
+# nest_asyncio.apply()
 
 
 load_dotenv()
+
 
 def set_env_vars(var):
     value = os.getenv(var)
     if value is not None:
         os.environ[var] = value
 
-vars = ["OPENAI_API_KEY", "LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2", "LANGCHAIN_ENDPOINT", "LANGCHAIN_PROJECT",]
+
+vars = ["OPENAI_API_KEY", "LANGCHAIN_API_KEY", "LANGCHAIN_TRACING_V2",
+        "LANGCHAIN_ENDPOINT", "LANGCHAIN_PROJECT",]
 
 for var in vars:
     set_env_vars(var)
 
 llm_openai = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 llm_mini = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-#llm_anthropic = ChatAnthropic(model="claude-3-5-sonnet-20240620", temperature=0)
+# llm_anthropic = ChatAnthropic(model="claude-3-5-sonnet-20240620", temperature=0)
 llm_openai_o1 = ChatOpenAI(model="o1-preview", temperature=1)
 llm = llm_openai
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 mark_page_path = os.path.join(current_dir, "static", "mark_page.js")
-
 
 
 class Bbox(TypedDict):
@@ -57,13 +57,14 @@ class Bbox(TypedDict):
     type: str
     ariaLabel: str
 
+
 class Action(TypedDict):
     action: str
     args: str | Bbox
 
+
 class MasterPlanState(TypedDict):
     plan: List[str]
-
 
 
 class AgentState(TypedDict):
@@ -79,9 +80,9 @@ class AgentState(TypedDict):
     answer: str
 
 
-
 with open(mark_page_path) as f:
     mark_page_script = f.read()
+
 
 async def is_image_blank(image_bytes: bytes) -> bool:
     """Return True if the screenshot is fully blank (e.g. all white), else False."""
@@ -91,31 +92,32 @@ async def is_image_blank(image_bytes: bytes) -> bool:
     # If getbbox() returns None, the image is entirely one color
     return img.getbbox() is None
 
+
 async def capture_screenshot(page: Page, max_retries=3, wait_seconds=2) -> bytes:
     """Take a screenshot, retry if blank (completely white)."""
     screenshot_bytes = b""
     for attempt in range(max_retries):
         # Wait for the page to be fully loaded
         await page.wait_for_load_state("networkidle")
-        
+
         # Take screenshot
         screenshot_bytes = await page.screenshot(path="screenshot.jpg", type="jpeg", quality=60, scale="device")
-        
+
         # Check if it's blank
         if not await is_image_blank(screenshot_bytes):
             return screenshot_bytes
-        
+
         # If blank, wait a bit and retry
-        print(f"[capture_screenshot] Screenshot is blank (attempt {attempt+1}/{max_retries}). Retrying...")
+        print(f"[capture_screenshot] Screenshot is blank (attempt {
+              attempt+1}/{max_retries}). Retrying...")
         await asyncio.sleep(wait_seconds)
-    
+
     # If we get here, all attempts yielded a blank screenshot
     print("[capture_screenshot] All screenshot attempts were blank.")
     return screenshot_bytes  # Return whatever we got last
 
 
 async def mark_page(page):
-
     """
     1. Wait for the page to be loaded using 'networkidle'.
     2. Attempt to run a 'mark_page_script' that presumably marks and returns bounding boxes.
@@ -127,22 +129,23 @@ async def mark_page(page):
 
     bboxes = []
 
-    for attempt in range (3):
-        
-        try: 
-            
+    for attempt in range(3):
+
+        try:
+
             await page.wait_for_load_state("domcontentloaded")
             await page.evaluate(mark_page_script)
             bboxes = await page.evaluate("markPage()")
-            
+
             break
         except Exception as e:
-            print(f"[mark_page] Attempt {attempt+1}/3 failed to mark page: {e}")
+            print(f"[mark_page] Attempt {
+                  attempt+1}/3 failed to mark page: {e}")
             await asyncio.sleep(3)
     # Get screenshot as bytes
     await page.wait_for_load_state("networkidle")
     screenshot_bytes = await capture_screenshot(page, max_retries=3)
-    
+
     # Process screenshot if we have any bytes
     if screenshot_bytes:
         img = PILImage.open(io.BytesIO(screenshot_bytes))
@@ -153,7 +156,7 @@ async def mark_page(page):
         img.thumbnail(max_size, PILImage.Resampling.LANCZOS)
         # Quantize and convert back to grayscale
         img = img.quantize(colors=256).convert('RGB')
-        
+
         # Compress
         buffer = io.BytesIO()
         img.save(
@@ -184,58 +187,58 @@ async def mark_page(page):
 
 async def setup_browser_2(go_to_page: str):
     playwright = await async_playwright().start()
-    
+
     # Add browser arguments to appear more human-like
     browser_args = [
         '--disable-dev-shm-usage',
         '--disable-blink-features=AutomationControlled',  # Hide automation
         '--no-sandbox',
-        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',  # Use a common user agent
+        # Use a common user agent
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
     ]
-    
+
     # Add browser context options
     context_options = {
-        #"viewport": {"width": 1076, "height": 1076},  # Standard desktop resolution
+        # "viewport": {"width": 1076, "height": 1076},  # Standard desktop resolution
         "viewport": {"width": 1280, "height": 720},
         "user_agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         "permissions": ['geolocation'],
-        "geolocation": {"latitude": 37.7749, "longitude": -122.4194},  # Set a fixed location
+        # Set a fixed location
+        "geolocation": {"latitude": 37.7749, "longitude": -122.4194},
         "locale": 'en-US',
         "timezone_id": 'America/Los_Angeles',
     }
-    
+
     browser = await playwright.chromium.launch(
-        headless=False,
+        headless=True,
         args=browser_args
     )
-    
+
     # Create context with the specified options
     context = await browser.new_context(**context_options)
-    
+
     # Enable JavaScript and cookies
     await context.add_init_script("""
         Object.defineProperty(navigator, 'webdriver', {
             get: () => undefined
         });
     """)
-    
+
     page = await context.new_page()
-    
+
     try:
         await page.goto(go_to_page, timeout=80000, wait_until="domcontentloaded")
     except Exception as e:
         print(f"Error loading page: {e}")
         # Fallback to Google if the original page fails to load
         await page.goto("https://www.google.com", timeout=60000, wait_until="domcontentloaded")
-    
-    return playwright, browser, page
 
+    return playwright, browser, page
 
 
 async def master_plan_node(state: AgentState):
 
     screen_shot = await mark_page(state["page"])
-    
 
     system_message = """
     You are an expert a preparing a step by step plan to complete a task.
@@ -262,7 +265,7 @@ async def master_plan_node(state: AgentState):
     --Notes--
     The browser is already open. First page will always be google, so plan accordingly with a search term.
     For any question, you will need to go to google and search for the question.
-    """ 
+    """
 
     human_prompt = """ This is the task that needs to be performed/question that needs to be answered: {input} \n This is the screenshot of the current web page: {screenshot}"""
 
@@ -277,10 +280,8 @@ async def master_plan_node(state: AgentState):
     structured_llm = llm.with_structured_output(MasterPlanState)
 
     response = structured_llm.invoke(messages)
-    
 
     return {"master_plan": [response]}
-
 
 
 async def annotate_page(state: AgentState):
@@ -289,9 +290,9 @@ async def annotate_page(state: AgentState):
     return {"image": result["image"], "bboxes": result["bboxes"]}
 
 
-async def llm_call_node(state: AgentState):   
+async def llm_call_node(state: AgentState):
 
-    template =  """Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration,
+    template = """Imagine you are a robot browsing the web, just like humans. Now you need to complete a task. In each iteration,
     you will receive an Observation that includes a screenshot of a webpage and some texts. 
     Carefully analyze the bounding box information and the web page contents to identify the Numerical Label corresponding 
     to the Web Element that requires interaction, then follow
@@ -339,8 +340,6 @@ async def llm_call_node(state: AgentState):
 
     Observation including a screenshot of a webpage with bounding boxes and the text related to it: {{result}}"""
 
-
-
     prompt = ChatPromptTemplate(
         messages=[
             ("system", template),
@@ -348,29 +347,27 @@ async def llm_call_node(state: AgentState):
             ("human", "Actions Taken So far: {actions_taken}"),
             ("human", "Observation: Screenshot: {image}"),
             ("human", "Observation: Bounding Boxes: {bboxes}"),
-            
+
         ],
         input_variables=["image", "bboxes", "input"],
         partial_variables={"actions_taken": []},
         optional_variables=["actions_taken"]
     )
-    
-    
 
     actions_taken = state.get("actions_taken", [])
     image = state["image"]
     bboxes = state["bboxes"]
     input = state["input"]
     master_plan = state["master_plan"]
-    
-    prompt_value = prompt.invoke({"actions_taken": actions_taken, "image": image, "bboxes": bboxes, "input": input, "master_plan": master_plan})
-    
+
+    prompt_value = prompt.invoke({"actions_taken": actions_taken, "image": image,
+                                 "bboxes": bboxes, "input": input, "master_plan": master_plan})
+
     response = llm.invoke(prompt_value)
 
     action = response.content
-    
-    return {"action": action}
 
+    return {"action": action}
 
 
 async def parse_action_node(state: AgentState):
@@ -389,7 +386,6 @@ async def parse_action_node(state: AgentState):
     return {"action": Action(action=action, args=args), "notes": [thought_block]}
 
 
-
 tools = {
     "Click": "click",
     "Type": "type",
@@ -398,7 +394,6 @@ tools = {
     "GoBack": "go_back",
     "Google": "go_to_search_engine"
 }
-
 
 
 def tool_router(state: AgentState):
@@ -429,17 +424,17 @@ async def answer_node(state: AgentState):
             ("system", system_message_answer),
         ],
         input_variables=["notes", "input"],
-    )   
+    )
 
     notes = state["notes"]
     input = state["input"]
 
-    prompt_value_answer = prompt_answer.invoke({"notes": notes, "input": input})
+    prompt_value_answer = prompt_answer.invoke(
+        {"notes": notes, "input": input})
     response_answer = llm_mini.invoke(prompt_value_answer)
     answer = response_answer.content
-    
-    return {"answer": answer}
 
+    return {"answer": answer}
 
 
 async def click(state: AgentState):
@@ -455,13 +450,12 @@ async def click(state: AgentState):
     return {"last_action": f"Click : clicked on {bbox_id}", "actions_taken": [f"Click : clicked on {bbox_id}"]}
 
 
-
 async def scroll_2(state: AgentState):
     page = state["page"]
     action = state["action"]
     scroll_type = action["action"].split(" ")[1].split("[")[1].split("]")[0]
     direction = action["args"]
-    
+
     async def is_pdf_page():
         current_url = page.url
         return (
@@ -471,7 +465,8 @@ async def scroll_2(state: AgentState):
         )
 
     async def try_scroll_methods(is_down: bool):
-        keys = ["PageDown", "Space", "ArrowDown", "j"] if is_down else ["PageUp", "ArrowUp", "k"]
+        keys = ["PageDown", "Space", "ArrowDown",
+                "j"] if is_down else ["PageUp", "ArrowUp", "k"]
         # Reduced to just one key press for more controlled scrolling
         for key in keys:
             try:
@@ -484,8 +479,7 @@ async def scroll_2(state: AgentState):
 
     if scroll_type == "WINDOW":
         is_pdf = await is_pdf_page()
-      
-        
+
         if is_pdf:
             try:
                 # Wait for PDF to load
@@ -494,19 +488,20 @@ async def scroll_2(state: AgentState):
 
                 # Try to click on the PDF to ensure focus
                 try:
-                    await page.mouse.click(300, 300)  # Click somewhere in the middle of the page
+                    # Click somewhere in the middle of the page
+                    await page.mouse.click(300, 300)
                 except Exception:
                     pass
 
                 # Single scroll attempt
                 await try_scroll_methods(direction.lower() == "down")
                 await page.wait_for_timeout(500)
-                
+
                 return {
                     "last_action": f"Scroll : scrolled {direction} on PDF document",
                     "actions_taken": [f"Scroll : scrolled {direction} on PDF document"]
                 }
-                
+
             except Exception as e:
                 print(f"PDF scrolling error: {str(e)}")
                 return {
@@ -528,14 +523,14 @@ async def scroll_2(state: AgentState):
                 """)
             except Exception:
                 await page.evaluate(f"window.scrollBy(0, {scroll_direction})")
-        
+
         await page.wait_for_timeout(500)
-        
+
         return {
             "last_action": f"Scroll : scrolled {direction}",
             "actions_taken": [f"Scroll : scrolled {direction}"]
         }
-    
+
     else:
         # Element-specific scrolling
         try:
@@ -546,26 +541,26 @@ async def scroll_2(state: AgentState):
                     "args": f"Could not find bbox with id {bbox_id}",
                     "actions_taken": [f"Could not find bbox with id {bbox_id}"]
                 }
-                
+
             bbox = state["bboxes"][bbox_id]
             scroll_amount = 200
             scroll_direction = -scroll_amount if direction.lower() == "up" else scroll_amount
-            
+
             await page.mouse.move(bbox["x"], bbox["y"])
             await page.mouse.wheel(0, scroll_direction)
-            
+
             return {
                 "last_action": f"Scroll : scrolled {direction} at element {bbox_id}",
                 "actions_taken": [f"Scroll : scrolled {direction} at element {bbox_id}"]
             }
-            
+
         except Exception as e:
             return {
                 "action": "retry",
                 "args": f"Error scrolling element: {str(e)}",
                 "actions_taken": [f"Error scrolling element: {str(e)}"]
             }
-        
+
 
 async def type(state: AgentState):
     page = state["page"]
@@ -590,7 +585,6 @@ async def type(state: AgentState):
     return {"last_action": f"Type : typed {action['args']} into {bbox_id}", "actions_taken": [f"Type : typed {action['args']} into {bbox_id}"]}
 
 
-
 async def wait(state: AgentState):
     await asyncio.sleep(3)
     return {"last_action": "Wait : waited for 3 seconds", "actions_taken": ["Wait : waited for 3 seconds"]}
@@ -600,7 +594,6 @@ async def go_back(state: AgentState):
     page = state["page"]
     await page.go_back()
     return {"last_action": f"Go Back : Navigated back to page {page.url}", "actions_taken": [f"Go Back : Navigated back to page {page.url}"]}
-
 
 
 async def go_to_search_engine(state: AgentState):
@@ -627,7 +620,8 @@ builder.add_edge(START, "master_plan_node")
 builder.add_edge("master_plan_node", "annotate_page")
 builder.add_edge("annotate_page", "llm_call")
 builder.add_edge("llm_call", "parse_action")
-builder.add_conditional_edges("parse_action", tool_router, ["annotate_page",  "click", "type", "scroll", "wait", "go_back", "go_to_search_engine", "answer_node"])
+builder.add_conditional_edges("parse_action", tool_router, [
+                              "annotate_page",  "click", "type", "scroll", "wait", "go_back", "go_to_search_engine", "answer_node"])
 builder.add_edge("click", "annotate_page")
 builder.add_edge("type", "annotate_page")
 builder.add_edge("scroll", "annotate_page")
