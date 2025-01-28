@@ -19,7 +19,7 @@ export default function RoverPage() {
 
   const handleDisconnect = async () => {
     try {
-      await fetch("http://3.84.77.172:8000/cleanup", {
+      await fetch("https://234a-2401-4900-1cb1-fde6-c890-28f5-6cac-e9c1.ngrok-free.app/cleanup", {
         method: "POST",
       });
     } catch (error) {
@@ -36,7 +36,7 @@ export default function RoverPage() {
     setMessages([]); // Clear previous messages
 
     try {
-      const response = await fetch("http://3.84.77.172:8000/query", {
+      const response = await fetch("https://234a-2401-4900-1cb1-fde6-c890-28f5-6cac-e9c1.ngrok-free.app/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
