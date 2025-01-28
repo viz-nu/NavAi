@@ -19,7 +19,7 @@ export default function RoverPage() {
 
   const handleDisconnect = async () => {
     try {
-      await fetch("http://127.0.0.1:8000/cleanup", {
+      await fetch("http://3.84.77.172:8000/cleanup", {
         method: "POST",
       });
     } catch (error) {
@@ -36,7 +36,7 @@ export default function RoverPage() {
     setMessages([]); // Clear previous messages
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/query", {
+      const response = await fetch("http://3.84.77.172:8000/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

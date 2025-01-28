@@ -16,7 +16,7 @@
 
 //     try {
 //       console.log('Attempting to connect...');
-//       const response = await fetch('http://127.0.0.1:8000/setup-browser', {
+//       const response = await fetch('http://3.84.77.172:8000/setup-browser', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -122,16 +122,13 @@ export default function Home() {
 
     try {
       console.log("Attempting to connect...");
-      const response = await fetch(
-        "http://127.0.0.1:8000/setup-browser",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ url: "https://www.google.com" }),
-        }
-      );
+      const response = await fetch("http://3.84.77.172:8000/setup-browser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: "https://www.google.com" }),
+      });
 
       console.log("Response status:", response.status);
 
