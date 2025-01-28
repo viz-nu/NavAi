@@ -122,7 +122,7 @@ export default function Home() {
 
     try {
       console.log("Attempting to connect...");
-      const response = await fetch("https://234a-2401-4900-1cb1-fde6-c890-28f5-6cac-e9c1.ngrok-free.app/setup-browser", {
+      const response = await fetch("https://navai.ngrok.io/setup-browser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
