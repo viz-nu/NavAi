@@ -123,7 +123,7 @@ export default function Home() {
     try {
       console.log("Attempting to connect...");
       const response = await fetch(
-        "http://http://127.0.0.1:8000/setup-browser",
+        "http://127.0.0.1:8000/setup-browser",
         {
           method: "POST",
           headers: {
